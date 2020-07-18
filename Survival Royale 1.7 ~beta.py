@@ -10,14 +10,21 @@ player = turtle.Turtle()
 turtle.bgcolor("black")
 choice = random.randint(1,2)
 
-earn1 = 4
-earn2 = 2
-earn3 = 15
-earn4 = 3
-earn5 = 9
-earn6 = 6
-earn7 = 6
+tscreen = turtle.Screen()
+
+earn1 = 4 
+earn2 = 2 
+earn3 = 15 
+earn4 = 3 
+earn5 = 9 
+earn6 = 6 
+earn7 = 6 
 op = 1
+
+#Ignore this VV
+GoblinKilledByGun = False
+
+Healing = False
 
 #Quest Number
 QuestNum = 1
@@ -44,8 +51,10 @@ RandomNumber1 = 5
 RandomNumber2 = 10
 GlobalRandomNumber = 0
 GlobalRandomNumber2 = 0
-reward = 30
+GlobalRandomNumber3 = 0
+reward = 10
 XPReward = 10
+kills = 0
 #These numbers will be changed throught out the program
 
 playerheading = 90
@@ -53,13 +62,13 @@ playerheading = 90
 bro = 1
 seeable = 1
 math4 = 1
-purcase = 1
+purcase = 0
 used = 1
 timer = 500
 firemonsterlives = 2
 change = 0
 on = 0
-healing = 1
+healing = 0
 ghostlives = 1
 xp = 0
 level = 1
@@ -102,7 +111,7 @@ gem1 = turtle.Turtle()
 gem1.hideturtle()
 gem1.color("yellow")
 gem1.penup()
-gem1.setpos(350,-290)
+gem1.setpos(350,-350)
 gem1.pendown()
 player.shape("circle")
 player.color("yellow")
@@ -172,7 +181,7 @@ coin1.speed(0)
 coin1.color("red")
 coin1.hideturtle()
 coin1.penup()
-coin1.setpos(350,-330)
+coin1.setpos(350,-390)
 coin1.pendown()
 
 bullet = turtle.Turtle()
@@ -285,8 +294,11 @@ def REALquest():
     global RandomNumber2
     global GlobalRandomNumber
     global GlobalRandomNumber2
+    global GlobalRandomNumber3
     global AlreadyClicked
+    global kills
     global QuestNum
+    global purcase
 
     print("Quest:",QuestNum)
     def exit2():
@@ -299,6 +311,7 @@ def REALquest():
         global XPReward
         global GlobalRandomNumber
         global GlobalRandomNumber2
+        global GlobalRandomNumber3
         global QuestNum
         QuestNum = QuestNum + 1
         ChangeValues(reward,0,XPReward)
@@ -309,13 +322,19 @@ def REALquest():
         XPReward = XPReward * 2
         GlobalRandomNumber = GlobalRandomNumber * 2
         GlobalRandomNumber2 = GlobalRandomNumber * 2
+        GlobalRandomNumber3 = GlobalRandomNumber3 * 2
         exit2()
+    def show_gui():
+        ClaimReward1 = Button(root, text="Claim Reward",font = ("arial",30,"bold"), command=ClaimReward,bg="white")
+        ClaimReward1.pack()
     if AlreadyClicked == False:
         AlreadyClicked = True
         GlobalRandomNumber = random.randint(RandomNumber1,RandomNumber2)
         GlobalRandomNumber2 = random.randint(RandomNumber1,RandomNumber2)
+        GlobalRandomNumber3 = random.randint(RandomNumber1,RandomNumber2)
         print(GlobalRandomNumber)
         print(GlobalRandomNumber2)
+        print(GlobalRandomNumber3)
         #end
     root = Tk()
     root.focus_set()
@@ -329,6 +348,8 @@ def REALquest():
 
     colo = "white"
     colo2 = "white"
+    colo3 = "white"
+    colo4 = "white"
     if gem >= GlobalRandomNumber:
         colo = "green"
     else:
@@ -337,15 +358,36 @@ def REALquest():
         colo2 = "green"
     else:
         colo2 = "white"
+    if kills >= GlobalRandomNumber3:
+        colo3 = "green"
+    else:
+        colo3 = "white"
+    if purcase == 1:
+        colo4 = "green"
+    else:
+        colo4 = "white"
     dabel = Label(root, font = ("arial",20,"bold"),text=("Coins:",gem,"/",GlobalRandomNumber),bg=colo)
     dabel.pack()
         
     dabel2 = Label(root, font = ("arial",20,"bold"),text=("Gems:",coin,"/",GlobalRandomNumber2),bg=colo2)
     dabel2.pack()
 
-    if colo == "green" and colo2 == "green":
-        ClaimReward = Button(root, text="Claim Reward",font = ("arial",30,"bold"), command=ClaimReward,bg="white")
-        ClaimReward.pack()
+    dabel3 = Label(root, font = ("arial",20,"bold"),text=("Kills:",kills,"/",GlobalRandomNumber3),bg=colo3)
+    dabel3.pack()
+
+    if QuestNum == 3:
+        dabel4 = Label(root, font = ("arial",20,"bold"),text=("Buy","Toxic","Realm:",purcase,"/","1"),bg=colo4)
+        dabel4.pack()
+
+    if colo == "green" and colo2 == "green" and colo3 == "green":
+        if QuestNum == 3:
+            if purcase == 0:
+                print("Doesn't own Toxic Realm")
+            else:
+                print("Owns Toxic Realm!")
+                show_gui()
+        else:
+            show_gui()
     
     rp = Button(root, text="Exit out of Quests",font = ("arial",30,"bold"), command=exit2,bg="white")
     rp.pack(side=BOTTOM)
@@ -680,7 +722,7 @@ def REALshop():
                     global gem
                     global level
                     global purcase
-                    purcase = purcase - 1
+                    purcase = purcase + 1
                     error.undo()
                     gem = gem - 50
                     xp = xp - 100
@@ -700,7 +742,7 @@ def REALshop():
                     player.setposition(0,0)
                     player.setheading(90)
             if gem >= 50 and xp >= 100:
-                    if purcase == 0:
+                    if purcase == 1:
                             error.write("An Error Occured while Processing your Transaction!", False, align="center", font=("Arial",20, "bold"))
                             time.sleep(2)
                             error.undo()
@@ -888,6 +930,8 @@ def REALshop():
                     global lives
                     global xp
                     global BULLETS
+                    global playerheading
+                    playerheading = 90
                     error.undo()
                     gem = gem - 20
                     gem1.undo()
@@ -976,9 +1020,9 @@ def REALshop():
         bulletoo.pack()
 
         ee11 = ""
-        if purcase == 0:
-            ee11 = "Toxic Realm: OWNED"
         if purcase == 1:
+            ee11 = "Toxic Realm: OWNED"
+        if purcase == 0:
             ee11 = "Toxic Realm: 50 COINS and 100 XP"
         Realm2 = Button(root, text=ee11,font = "arial", command=toxicrealm,bg="light green")
         Realm2.pack()
@@ -1010,6 +1054,7 @@ def REALshop():
             pass
         
 def onclick(xdummy,ydummy):
+    global Healing
     global healing
     global lives
     global used
@@ -1034,12 +1079,8 @@ def onclick(xdummy,ydummy):
             print("Dead Function is already running")
         else:
             dead()
-    if healing == 0:
-        root.destroy()
-        error.write("You Can't Access the Menu while Healing", False, align="center", font=("Arial",20, "bold"))
-        time.sleep(2)
         error.undo()
-    elif lives > 0 and healing != 0:
+    elif lives > 0 and Healing == False:
         player.setposition(0,100000000)
         global gem
         global coin
@@ -1064,6 +1105,7 @@ def onclick(xdummy,ydummy):
         rp3 = Button(root, text="Cancel",font = ("arial",15,"bold"), command=exit3,bg="white")
         rp3.pack(side=BOTTOM)
     else:
+        root.destroy()
         pass
 shop = turtle.Turtle()
 shop.speed(0)
@@ -1088,7 +1130,10 @@ shop.color("black")
 shop.write("Menu", False, align="center", font=("Arial",20, "bold"))
 shop.penup()
 shop.setpos(-200,-150)
+shop.shapesize(2,4.89,2)
+#shop.hideturtle()
 shop.color("white")
+shop.shape("square")
 coinstash = turtle.Turtle()
 coinstash.speed(0)
 coinstash.color("brown")
@@ -1114,7 +1159,7 @@ lives = 24
 #update in progress
 wn.write("Health:", False, align="right", font=("Arial",40, "bold"))
 wn.write(lives, False, align="left", font=("Arial",40, "bold"))
-speed = 2
+speed = 1
 coinstash.setpos(90,200)
 xp3.setpos(0,-100)
 while True:
@@ -1155,7 +1200,7 @@ while True:
             greatjob.setpos(0,-250)
             greatjob.pendown()
             greatjob.write("great Job!  You hit a bear", False, align="center", font=("Arial",36, "bold"))
-            time.sleep(1)
+            time.sleep(0.3)
             greatjob.undo()
             spawn_bear()
         
@@ -1174,7 +1219,7 @@ while True:
             greatjob.setpos(0,-250)
             greatjob.pendown()
             greatjob.write("great Job!  You hit an ogre", False, align="center", font=("Arial",36, "bold"))
-            time.sleep(1)
+            time.sleep(0.3)
             greatjob.undo()
             spawn_ogre()
 
@@ -1193,7 +1238,8 @@ while True:
             greatjob.setpos(0,-250)
             greatjob.pendown()
             greatjob.write("great Job!  You hit a goblin", False, align="center", font=("Arial",36, "bold"))
-            time.sleep(1)
+            GoblinKilledByGun = True
+            time.sleep(0.3)
             greatjob.undo()
             spawn_goblin()
 
@@ -1212,7 +1258,7 @@ while True:
             greatjob.setpos(0,-250)
             greatjob.pendown()
             greatjob.write("great Job!  You hit a hunter", False, align="center", font=("Arial",36, "bold"))
-            time.sleep(1)
+            time.sleep(0.3)
             greatjob.undo()
             spawn_hunter()
 
@@ -1280,7 +1326,7 @@ while True:
             anotherrealm.setpos(-500,0)
             earth.penup()
             earth.setpos(0,111111)
-            speed = speed + 2
+            speed = 0.5
                 
             
             
@@ -1288,9 +1334,9 @@ while True:
             global speed
             hroot.destroy()
             error.undo()
-            speed = speed + 2
+            speed = 0.5
             player.forward(speed)
-        if purcase == 0:
+        if purcase == 1:
             speed = speed - speed
             player.forward(speed)
             player.setpos(0,0)
@@ -1309,7 +1355,7 @@ while True:
             yesyes2 = Button(hroot, text="YES",font = "arial", command=yesyesyes,bg="green")
             yesyes2.pack()
 
-        elif purcase == 1:
+        elif purcase == 0:
             error.write("You have not Purchased the Toxic Land Realm", False, align="center", font=("Arial",20, "bold"))
             player.forward(80)
             time.sleep(2)
@@ -1342,16 +1388,16 @@ while True:
             anotherrealm.setpos(0,1111111111)
             earth.penup()
             earth.setpos(-500,0)
-            speed = speed + 2
+            speed = 0.5 
             player.forward(speed)
             
         def nono():
             global speed
             hroot.destroy()
             error.undo()
-            speed = speed + 2
+            speed = 0.5
             player.forward(speed)
-        if purcase == 0:
+        if purcase == 1:
             speed = speed - speed
             player.forward(speed)
             player.setpos(0,0)
@@ -1370,7 +1416,7 @@ while True:
             yesyes2 = Button(hroot, text="YES",font = "arial", command=yesyes,bg="green")
             yesyes2.pack()
 
-        elif purcase == 1:
+        elif purcase == 0:
             error.write("You have not Purchased the Toxic Land Realm", False, align="center", font=("Arial",20, "bold"))
             player.forward(80)
             time.sleep(2)
@@ -1455,7 +1501,7 @@ while True:
             wn.color("white")
             wn.write(lives, False, align="left", font=("Arial",40, "bold"))
             time.sleep(1.7)
-            speed = speed + 2
+            speed = 0.5
             player.forward(speed)
     elif u < 5:
         if lives <= 0:
@@ -1503,8 +1549,21 @@ while True:
             time.sleep(0.5)
             
     elif e < 10:
-        if lives >= 24:
+        root = Tk()
+        root.focus_set()
+        root.geometry('300x100')
+        root.title("Process")
+
+        def SHealing():
+            global Healing
+            global healing
+            Healing = False
             healing = 1
+            root.destroy()
+        CHealing = Button(root, text="Cancel Healing",font = ("arial",20,"bold"), command=SHealing,bg="white")
+        CHealing.pack()
+        if lives >= 24:
+            SHealing()
             message.hideturtle()
             message.setpos(0,-300)
             message.write("Your healed up!", False, align="right", font=("Arial",30, "bold"))
@@ -1513,31 +1572,55 @@ while True:
             time.sleep(2)
             player.forward(50)
         elif lives < 24:
-            healing = 0
+            Healing = True
             message.write("Let me heal you up!", False, align="right", font=("Arial",30, "bold"))
             time.sleep(1)
             message.undo()
             if lives < 10:
                 while lives != 10 or on == 1:
+                    if healing == 1:
+                        wn.undo()
+                        wn.write(lives, False, align="left", font=("Arial",40, "bold"))
+                        player.forward(50)
+                        healing = 0
+                        break
                     lives = lives + 2
                     wn.undo()
                     wn.write(lives, False, align="left", font=("Arial",40, "bold"))
                     time.sleep(speed2)
                 while lives != 24 or on == 1:
+                    if healing == 1:
+                        wn.undo()
+                        wn.write(lives, False, align="left", font=("Arial",40, "bold"))
+                        player.forward(50)
+                        healing = 0
+                        break
                     lives = lives + 1
                     wn.undo()
                     wn.write(lives, False, align="left", font=("Arial",40, "bold"))
                     time.sleep(speed2)
+                if lives >= 24:
+                    player.forward(50)
+                    SHealing()
             else:   
                 wn.undo()
                 wn.penup()
                 wn.setpos(-30,320)
                 wn.pendown()
                 while lives != 24 or on == 1:
+                    if healing == 1:
+                        wn.undo()
+                        wn.write(lives, False, align="left", font=("Arial",40, "bold"))
+                        player.forward(50)
+                        healing = 0
+                        break
                     lives = lives + 1
                     wn.undo()
                     wn.write(lives, False, align="left", font=("Arial",40, "bold"))
                     time.sleep(speed2)
+                if lives >= 24:
+                    player.forward(50)
+                    SHealing()
                 
     def dead():
         global xp
@@ -1547,6 +1630,7 @@ while True:
         global lives
         global alreadydead
         alreadydead = True
+        player.setpos(100000,100000)
         if bro != 1:
                 lives = 0
                 wn.undo()
@@ -1620,7 +1704,8 @@ while True:
                 wn.write(lives, False, align="left", font=("Arial",40, "bold"))
                 player.color("yellow")
                 player.setpos(0,0)
-                speed = 2
+                alreadydead = False
+                speed = 0.5
                 
         elif bro == 1:
                 player.forward(0)
@@ -1643,9 +1728,6 @@ while True:
                 wn.pendown()
                 wn.color("blue")
                 wn.write(xp, False, align="center", font=("Arial",40, "bold"))
-                time.sleep(3)
-                turtle.exitonclick()
-        alreadydead = False
     if lives <= 0:
         player.forward(0)
     else:
@@ -1692,7 +1774,7 @@ while True:
             else:
                 dead()
         else:
-            speed += 1
+            speed += 0.5
     def minus():
         global speed
         global alreadydead
@@ -1702,338 +1784,367 @@ while True:
             else:
                 dead()
         else:
-            speed -= 1
+            speed -= 0.5
         
     def hit():
         global alreadydead
         if lives <= 0:
             if alreadydead == True:
                 print("Dead Function is already running")
-                pass
             else:
                 dead()
-                pass
-        global bearlives
-        global ogrelives
-        global goblinlives
-        global hunterlives
-        global witherghoullives
-        global firemonsterlives
-        global ghostlives
-        global seeable
-        global xp
-        global coin
-        global used
-        global AlreadyHitBear
-        global AlreadyHitOgre
-        global AlreadyHitGhost
-        global AlreadyHitGoblin
-        global AlreadyHitHunter
-        global AlreadyHitWitherGhoul
-        global AlreadyHitFireMonster
-        d = math.sqrt(math.pow(player.xcor()-obstacle.xcor(),2)  + math.pow(player.ycor()-obstacle.ycor(),2))
-        if f < 30 and AlreadyHitBear == False:
-            if bearlives == 5:
-                AlreadyHitBear = True
-                bearlives = 1
-                coin = earn1 + coin
-                obstacle2.hideturtle()
-                obstacle2.setpos(0,1000)        
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 3
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.hideturtle()
-                greatjob.penup()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit an bear", False, align="center", font=("Arial",36, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_bear()
-                AlreadyHitBear = False
-            else:
-                bearlives = bearlives + 1
-        
-        elif d < 15 and AlreadyHitOgre == False:
-            if ogrelives == 3:
-                AlreadyHitOgre = True
-                coin = earn2 + coin
-                obstacle.hideturtle()
-                obstacle.setpos(0,1000)        
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 1
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.hideturtle()
-                greatjob.penup()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit an ogre", False, align="center", font=("Arial",36, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_ogre()
-                AlreadyHitOgre = False
-            else:
-                ogrelives = ogrelives + 1
-        elif y < 30 and AlreadyHitGhost == False:
-            if ghostlives == 5:
-                AlreadyHitGhost = True
-                used = 1
-                ghostlives = 1
-                coin = coin + earn3
-                obstacle7.hideturtle()
-                obstacle7.setpos(0,192309)
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 4
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.penup()
-                greatjob.hideturtle()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit a Ghost", False, align="center", font=("Arial",36, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                greatjob.hideturtle()
-                player.color("yellow")
-                seeable = seeable + 1
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_ghost()
-                AlreadyHitGhost = False
-            elif seeable == 1:
-                 error.write("You can't hit the ghost!", False, align="center", font=("Arial",30, "bold"))
-                 time.sleep(0.5)
-                 error.undo()
-            else:
-                ghostlives = ghostlives + 1
-                
-        elif u < 5 and AlreadyHitGoblin == False:
-            if goblinlives == 3:
-                AlreadyHitGoblin = True
-                goblinlives = goblinlives - goblinlives + 2
-                coin = earn4 + coin
-                obstacle3.hideturtle()
-                obstacle3.setpos(0,1000)        
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 2
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.penup()
-                greatjob.hideturtle()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit a goblin", False, align="center", font=("Arial",36, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_goblin()
-                AlreadyHitGoblin = False
-            else:
-                goblinlives = goblinlives + 1
-        elif s < 15 and AlreadyHitHunter == False:
-            if hunterlives == 7:
-                AlreadyHitHunter = True
-                hunterlives = 14
-                coin = earn5 + coin
-                obstacle4.hideturtle()
-                obstacle4.setpos(0,1000)        
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 12
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.hideturtle()
-                greatjob.penup()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit a hunter", False, align="center", font=("Arial",36, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_hunter()
-                AlreadyHitHunter = False
-            else:
-                hunterlives = hunterlives - 1
-        elif i < 30 and AlreadyHitWitherGhoul == False:
-            if witherghoullives == 6:
-                AlreadyHitWitherGhoul = True
-                witherghoullives = 1
-                coin = earn6 + coin
-                obstacle5.hideturtle()
-                obstacle5.setpos(0,1000)        
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 5
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.hideturtle()
-                greatjob.penup()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit a Wither Ghoul", False, align="center", font=("Arial",28, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_witherghoul()
-                AlreadyhitWitherGhoul = False
-            else:
-                witherghoullives = witherghoullives + 1
-        elif k < 10 and AlreadyHitFireMonster == False:
-            if firemonsterlives == 6:
-                AlreadyHitFireMonster = True
-                firemonsterlives = 0
-                coin = earn7 + coin
-                obstacle6.hideturtle()
-                obstacle6.setpos(0,1000)        
-                coin1.undo()
-                coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
-                coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
-                xp = xp + 5
-                xpt.undo()
-                xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
-                greatjob = turtle.Turtle()
-                greatjob.color("white")
-                greatjob.hideturtle()
-                greatjob.penup()
-                greatjob.setpos(0,-250)
-                greatjob.pendown()
-                greatjob.write("great Job!  You hit a Fire Monster", False, align="center", font=("Arial",28, "bold"))
-                time.sleep(1)
-                greatjob.undo()
-                pick = random.randint(1,4)
-                pick2 = random.randint(1,4)
-                if pick2 == 4:
-                    xp3.setpos(0,-100)
-                if pick == 4:
-                    coinstash.setpos(90,200)
-                spawn_firemonster()
-                AlreadyHitFireMonster = False
-            else:
-                firemonsterlives = firemonsterlives + 1
         else:
-            message.write("There's nothing to hit!", False, align="center", font=("Arial",40, "bold"))
-            time.sleep(1)
-            message.undo()
+            global bearlives
+            global ogrelives
+            global goblinlives
+            global hunterlives
+            global witherghoullives
+            global firemonsterlives
+            global ghostlives
+            global seeable
+            global xp
+            global coin
+            global used
+            global AlreadyHitBear
+            global AlreadyHitOgre
+            global AlreadyHitGhost
+            global AlreadyHitGoblin
+            global AlreadyHitHunter
+            global AlreadyHitWitherGhoul
+            global AlreadyHitFireMonster
+            d = math.sqrt(math.pow(player.xcor()-obstacle.xcor(),2)  + math.pow(player.ycor()-obstacle.ycor(),2))
+            if f < 30 and AlreadyHitBear == False:
+                if bearlives == 5:
+                    AlreadyHitBear = True
+                    bearlives = 1
+                    coin = earn1 + coin
+                    obstacle2.hideturtle()
+                    obstacle2.setpos(0,1000)        
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 3
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.hideturtle()
+                    greatjob.penup()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit a bear", False, align="center", font=("Arial",36, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_bear()
+                    AlreadyHitBear = False
+                else:
+                    bearlives = bearlives + 1
+            
+            elif d < 15 and AlreadyHitOgre == False:
+                if ogrelives == 3:
+                    AlreadyHitOgre = True
+                    coin = earn2 + coin
+                    obstacle.hideturtle()
+                    obstacle.setpos(0,1000)        
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 1
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.hideturtle()
+                    greatjob.penup()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit an ogre", False, align="center", font=("Arial",36, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_ogre()
+                    AlreadyHitOgre = False
+                else:
+                    ogrelives = ogrelives + 1
+            elif y < 30 and AlreadyHitGhost == False:
+                if ghostlives == 5:
+                    AlreadyHitGhost = True
+                    used = 1
+                    ghostlives = 1
+                    coin = coin + earn3
+                    obstacle7.hideturtle()
+                    obstacle7.setpos(0,192309)
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 4
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.penup()
+                    greatjob.hideturtle()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit a Ghost", False, align="center", font=("Arial",36, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    greatjob.hideturtle()
+                    player.color("yellow")
+                    seeable = seeable + 1
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_ghost()
+                    AlreadyHitGhost = False
+                elif seeable == 1:
+                     error.write("You can't hit the ghost!", False, align="center", font=("Arial",30, "bold"))
+                     time.sleep(0.5)
+                     error.undo()
+                else:
+                    ghostlives = ghostlives + 1
+                    
+            elif u < 5 and AlreadyHitGoblin == False:
+                if goblinlives == 3:
+                    AlreadyHitGoblin = True
+                    goblinlives = goblinlives - goblinlives + 2
+                    coin = earn4 + coin
+                    obstacle3.hideturtle()
+                    obstacle3.setpos(0,1000)        
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 2
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.penup()
+                    greatjob.hideturtle()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit a goblin", False, align="center", font=("Arial",36, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_goblin()
+                    AlreadyHitGoblin = False
+                else:
+                    goblinlives = goblinlives + 1
+            elif s < 15 and AlreadyHitHunter == False:
+                if hunterlives == 7:
+                    AlreadyHitHunter = True
+                    hunterlives = 14
+                    coin = earn5 + coin
+                    obstacle4.hideturtle()
+                    obstacle4.setpos(0,1000)        
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 12
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.hideturtle()
+                    greatjob.penup()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit a hunter", False, align="center", font=("Arial",36, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_hunter()
+                    AlreadyHitHunter = False
+                else:
+                    hunterlives = hunterlives - 1
+            elif i < 30 and AlreadyHitWitherGhoul == False:
+                if witherghoullives == 6:
+                    AlreadyHitWitherGhoul = True
+                    witherghoullives = 1
+                    coin = earn6 + coin
+                    obstacle5.hideturtle()
+                    obstacle5.setpos(0,1000)        
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 5
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.hideturtle()
+                    greatjob.penup()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit a Wither Ghoul", False, align="center", font=("Arial",28, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_witherghoul()
+                    AlreadyhitWitherGhoul = False
+                else:
+                    witherghoullives = witherghoullives + 1
+            elif k < 10 and AlreadyHitFireMonster == False:
+                if firemonsterlives == 6:
+                    AlreadyHitFireMonster = True
+                    firemonsterlives = 0
+                    coin = earn7 + coin
+                    obstacle6.hideturtle()
+                    obstacle6.setpos(0,1000)        
+                    coin1.undo()
+                    coin1.write("gems: ", False, align="right", font=("Arial",30, "bold"))
+                    coin1.write(coin, False, align="left", font=("Arial",30, "bold"))
+                    xp = xp + 5
+                    xpt.undo()
+                    xpt.write(xp, False, align="left", font=("Arial",40, "bold"))
+                    greatjob = turtle.Turtle()
+                    greatjob.color("white")
+                    greatjob.hideturtle()
+                    greatjob.penup()
+                    greatjob.setpos(0,-250)
+                    greatjob.pendown()
+                    greatjob.write("great Job!  You hit a Fire Monster", False, align="center", font=("Arial",28, "bold"))
+                    time.sleep(0.3)
+                    greatjob.undo()
+                    pick = random.randint(1,4)
+                    pick2 = random.randint(1,4)
+                    if pick2 == 4:
+                        xp3.setpos(0,-100)
+                    if pick == 4:
+                        coinstash.setpos(90,200)
+                    spawn_firemonster()
+                    AlreadyHitFireMonster = False
+                else:
+                    firemonsterlives = firemonsterlives + 1
+            else:
+                message.penup()
+                message.setpos(70,-290)
+                message.pendown()
+                message.write("There's nothing to hit!", False, align="right", font=("Arial",30, "bold"))
+                time.sleep(0.3)
+                message.undo()
     def space():
         global BulletFired
         global playerheading
         global BULLETS
-        if BULLETS > 0:
-            if BulletFired == False:
-                BulletFired = True
-                BULLETS = BULLETS - 1
-                #when the player presses the space key it will teleport the turtle to the player and shoot
-                bullet.setpos(player.xcor(),player.ycor())
-                bullet.setheading(playerheading)
+        global lives
+        global alreadydead
+        if lives <= 0:
+            if alreadydead == True:
+                print("Dead Function is already running")
+            else:
+                dead()
         else:
-            message.setpos(0,-300)
-            message.write("You have no ammo", False, align="right", font=("Arial",30, "bold"))
-            time.sleep(1)
-            message.undo()
+            if BULLETS > 0:
+                if BulletFired == False:
+                    BulletFired = True
+                    BULLETS = BULLETS - 1
+                    #when the player presses the space key it will teleport the turtle to the player and shoot
+                    bullet.setpos(player.xcor(),player.ycor())
+                    bullet.setheading(playerheading)
+            else:
+                message.penup()
+                message.setpos(0,-300)
+                message.pendown()
+                message.write("You have no ammo", False, align="right", font=("Arial",30, "bold"))
+                time.sleep(0.3)
+                message.undo()
 
         
             
             
     def spawn_ogre():
         global ogrelives
+        global kills
+        kills = kills + 1
         obstacle.penup()
         obstacle.setpos(random.randrange(200,300),random.randrange(200,300))
         obstacle.showturtle()
         ogrelives = 1
     def spawn_witherghoul():
+        global ogrelives
+        global kills
+        kills = kills + 1
         obstacle5.penup()
         obstacle5.setpos(random.randrange(200,300),random.randrange(200,300))
         obstacle5.showturtle()
         ogrelives = 1
     def spawn_firemonster():
+        global kills
+        kills = kills + 1
         obstacle6.penup()
         obstacle6.setpos(random.randrange(-100,-50),random.randrange(100,200))
         obstacle6.showturtle()
     def spawn_goblin():
-        global lives 
-        for x in range(4):
+        global lives
+        global kills
+        global GoblinKilledByGun
+        kills = kills + 1
+        if GoblinKilledByGun == False:
+            for x in range(4):
                 lives = lives - 1
                 wn.undo()
                 wn.color("green")
                 wn.write(lives, False, align="left", font=("Arial",40, "bold"))
                 time.sleep(0.5)
-        wn.undo()
         wn.color("white")
         wn.write(lives, False, align="left", font=("Arial",40, "bold"))
+        GoblinKilledByGun = False
         if lives <= 0:
-                obstacle3.penup()
-                obstacle3.setpos(random.randrange(-200,-100),random.randrange(200,300))
-                dead()
+            obstacle3.penup()
+            obstacle3.setpos(random.randrange(-200,-100),random.randrange(200,300))
+            dead()
         else:
-                obstacle3.penup()
-                obstacle3.setpos(random.randrange(-200,-100),random.randrange(200,300))
+            obstacle3.penup()
+            obstacle3.setpos(random.randrange(-200,-100),random.randrange(200,300))
         obstacle3.showturtle()
         wn.undo()
         wn.undo()
     def spawn_bear():
+        global kills
+        kills = kills + 1
         obstacle2.penup()
         obstacle2.setpos(random.randrange(-200,-100),random.randrange(0,200))
         obstacle2.showturtle()
     def spawn_hunter():
+        global kills
+        kills = kills + 1
         obstacle4.penup()
         obstacle4.setpos(random.randrange(-200,-100),random.randrange(-100,0))
         obstacle4.showturtle()
     def spawn_ghost():
+        global kills
+        kills = kills + 1
         obstacle7.penup()
         obstacle7.setpos(random.randrange(-200,200),random.randrange(-200, -10))
         obstacle7.showturtle()
